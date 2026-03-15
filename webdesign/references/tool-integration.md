@@ -5,7 +5,7 @@ This document provides detailed guidance on integrating each external tool in th
 ## Table of Contents
 1. UI UX Pro Max (UUPM)
 2. 21st.dev Magic MCP
-3. Nano Banana (Image Generation)
+3. Nano Banana 2 (Image Generation)
 4. Frontend-Design Skill
 5. Vercel Deployment
 
@@ -54,43 +54,94 @@ If the 21st.dev MCP is not connected, use web search to browse https://21st.dev/
 
 ---
 
-## 3. Nano Banana (Image Generation)
+## 3. Nano Banana 2 (Image Generation)
 
-Nano Banana uses Google’s Gemini models for image generation via CLI.
+Nano Banana 2 uses Google Gemini 3.1 Flash Image Preview for image generation via the inference.sh CLI (`infsh`).
+
+Source: https://github.com/inference-sh/skills/tree/main/tools/image/nano-banana-2
 
 ### Prerequisites
-- Gemini API key stored in `~/.nano-banana/.env`
-- Bun runtime installed
-- nano-banana CLI installed globally
+```bash
+# Install the inference.sh skills and CLI
+npx skills add inference-sh/skills@agent-tools
+infsh login
+```
 
 ### Command reference
 ```bash
-# Basic generation
-nano-banana "prompt" -o filename -d ./public/images
+# Basic text-to-image generation
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "A futuristic cityscape at sunset with flying cars"
+}'
 
-# High-quality hero image
-nano-banana "prompt" -s 2K -a 16:9 -m pro -o hero -d ./public/images
+# High-quality hero image (2K, wide)
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "detailed prompt here",
+  "aspect_ratio": "16:9",
+  "resolution": "2K"
+}'
 
-# Transparent asset (icon/illustration)
-nano-banana "prompt" -s 1K -a 1:1 -t -o icon-name -d ./public/images
+# Multiple variants to choose from
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "Minimalist logo design for a coffee shop",
+  "num_images": 4
+}'
 
-# Style transfer from reference
-nano-banana "prompt" -r reference.png -s 2K -o styled -d ./public/images
+# Edit an existing image
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "Add a rainbow in the sky",
+  "images": ["https://example.com/landscape.jpg"]
+}'
+
+# 4K resolution
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "Detailed illustration of a medieval castle",
+  "resolution": "4K"
+}'
+
+# With Google Search grounding (real-world accuracy)
+infsh app run google/gemini-3-1-flash-image-preview --input '{
+  "prompt": "Current weather in Tokyo visualized as an artistic scene",
+  "enable_google_search": true
+}'
 ```
 
-### Resolution & cost guide
-| Size | Flash cost | Pro cost | Use for |
-|------|-----------|----------|---------|
-| 512  | ~$0.04    | ~$0.13   | Thumbnails, small icons |
-| 1K   | ~$0.05    | ~$0.15   | Feature illustrations, cards |
-| 2K   | ~$0.08    | ~$0.20   | Hero images, backgrounds |
-| 4K   | ~$0.15    | ~$0.30   | Full-bleed hero, print-quality |
+### Input parameters
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `prompt` | string | Required. What to generate or edit |
+| `images` | array | Input images for editing (up to 14). JPEG, PNG, WebP |
+| `num_images` | integer | Number of images to generate |
+| `aspect_ratio` | string | "1:1", "16:9", "9:16", "4:3", "3:4", "auto" |
+| `resolution` | string | "1K" (default), "2K", "4K" |
+| `enable_google_search` | boolean | Enable real-time info grounding |
 
 ### Prompting tips
-- Include the brand’s color palette in prompts: "using a color palette of deep navy #1a1a2e and warm amber #f4a261"
-- Specify style explicitly: "flat illustration style" or "photorealistic" or "3D rendered"
-- For consistency across images, reuse style descriptors and reference previous outputs with `-r`
-- Use `-t` for any asset that needs to composite over a colored background
+- **Styles:** photorealistic, illustration, watercolor, oil painting, digital art, anime, 3D render
+- **Composition:** close-up, wide shot, aerial view, macro, portrait, landscape
+- **Lighting:** natural light, studio lighting, golden hour, dramatic shadows, neon
+- **Details:** add specific textures, colors (use hex values from the brief), mood, atmosphere
+- **Consistency:** reuse style descriptors across prompts for a cohesive image set
+
+### Sample workflow
+```bash
+# 1. Generate a sample input to see all available options
+infsh app sample google/gemini-3-1-flash-image-preview --save input.json
+
+# 2. Edit the prompt in input.json
+
+# 3. Run with the edited input
+infsh app run google/gemini-3-1-flash-image-preview --input input.json
+```
+
+### Related skills
+```bash
+# Original Nano Banana (Gemini 3 Pro / Gemini 2.5 Flash)
+npx skills add inference-sh/skills@nano-banana
+
+# All image generation models
+npx skills add inference-sh/skills@ai-image-generation
+```
 
 ---
 
