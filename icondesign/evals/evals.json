@@ -1,0 +1,23 @@
+{
+  "skill_name": "icon-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I need a shopping cart icon for my e-commerce website. It should be blue (#3B82F6) on a transparent background, flat style. Just give me PNG and SVG.",
+      "expected_output": "A flat, blue shopping cart icon exported as PNG (multiple sizes) and SVG, with transparent background",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create a set of 3 icons for my presentation slides: a lightbulb (for ideas), a target/bullseye (for goals), and a handshake (for partnerships). Use gold (#D4AF37) and dark grey (#333333). I want them at 256px and 512px only.",
+      "expected_output": "Three icons in matching gold/dark-grey style, exported at 256px and 512px as PNG and SVG",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "make me a little padlock icon for my app's login page, something modern and minimal, green and white colors. also need it as a favicon",
+      "expected_output": "A minimal padlock icon in green/white, exported as PNG, SVG, and ICO (favicon), with appropriate sizes including 16x16 and 32x32 for favicon use",
+      "files": []
+    }
+  ]
+}
